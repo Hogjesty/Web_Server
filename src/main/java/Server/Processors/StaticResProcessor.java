@@ -4,6 +4,8 @@ import Server.Constants;
 import Server.Http.Request;
 import Server.Http.Response;
 
+import java.io.IOException;
+
 public class StaticResProcessor implements Processor{
 
 
@@ -14,6 +16,10 @@ public class StaticResProcessor implements Processor{
         if (uri.isEmpty() || uri.equals("/")) {
             uri = Constants.ROOT;
         }
-        res.sendStatRes(uri);
+        try {
+            res.sendStatRes(uri);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

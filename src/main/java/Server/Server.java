@@ -6,6 +6,7 @@ import Server.Http.Request;
 import Server.Http.Response;
 import Server.Processors.Processor;
 import Server.Processors.ProcessorFabric;
+import Server.Servlet.ServletsMap;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,18 +18,24 @@ import java.net.Socket;
 public class Server {
 
     private final int port;
+    private ServletsMap servletsMap;
 
-    public Server(int port) {
+    public Server(int port, ServletsMap map) {
         this.port = port;
+        this.servletsMap = map;
+    }
+
+    public ServletsMap getServletsMap() {
+        return servletsMap;
     }
 
     public void await() throws IOException {
-        ServerSocket ss = null;
-
-        ss = new ServerSocket(this.port, 1, InetAddress.getByName(Constants.SERVER_NAME));
+        ServerSocket ss = new ServerSocket(
+                this.port, 1, InetAddress.getByName(Constants.SERVER_NAME)
+        );
 
         System.out.println("Server is waiting for requests on port " + port);
-
+        servletsMap.callInit();
         boolean isShutDown = false;
         while (!isShutDown) {
             Socket socket = ss.accept();
@@ -36,6 +43,7 @@ public class Server {
             socket.close();
         }
         ss.close();
+        servletsMap.callDestroy();
     }
 
     private boolean processReq(Socket socket) throws IOException {
@@ -54,11 +62,9 @@ public class Server {
         if (uri.equals(Constants.SHUTDOWN_COMMAND))
             return true;
 
-        Processor proc = ProcessorFabric.createProcessor(uri);
+        Processor proc = ProcessorFabric.createProcessor(this, uri);
         proc.process(req, res);
 
-//        Request;
-//        Response;
         return false;
     }
 

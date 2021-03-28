@@ -4,35 +4,47 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.Map;
 
 public class HttpRequest implements Request {
 
     private final InputStream in;
     private final String req;
     private final String uri;
+    private Map<String, String> params;
 
-
-    //-------------------------------------Constructors(CON)-----------------------------------------//
 
     public HttpRequest(InputStream in) throws IOException {
         this.in = in;
         this.req = convertStreamToString();
         this.uri = parseURI();
+        this.params = addParamsToMap();
     }
 
-    //---------------------------------------END_OF_CON-----------------------------------------------//
-    //                                                                                                //
-    //----------------------------------Private_Methods(PRIVY)----------------------------------------//
+
+    @Override
+    public String getParam(String name) {
+        return this.params.get(name);
+    }
+
+    @Override
+    public String getAsText() {
+        return this.req;
+    }
+
+    @Override
+    public String getURI() {
+        return this.uri;
+    }
+
 
     private String parseURI() {
         if (this.req.isEmpty()) {
             return "";
         }
-        int firstURIIndex = req.indexOf('/');
-        int lastURIIndex = req.indexOf(" H");
-
         // "GET /ex?p=s%20s HTTP/1.1" - example
-        return req.substring(firstURIIndex, lastURIIndex);
+        return req.substring(req.indexOf('/'), req.indexOf(" H"));
     }
 
     private String convertStreamToString() throws IOException {
@@ -54,23 +66,22 @@ public class HttpRequest implements Request {
         return fullReq.toString();
     }
 
-    //--------------------------------------END_OF_PRIVY----------------------------------------------//
+    private Map<String, String> addParamsToMap() {
+        Map<String, String> map = new HashMap<>();
 
-    //------------------------------------Public_Methods(PUB)-----------------------------------------//
-    @Override
-    public String getParam(String name) {
-        return null;
-    }
+        if (!this.req.contains("GET ") || !this.uri.contains("?"))
+            return map;
 
-    @Override
-    public String getAsText() {
-        return null;
-    }
 
-    @Override
-    public String getURI() {
-        return null;
+        String params = this.uri.substring(this.uri.indexOf('?') + 1);
+        String[] keyValuePairs = params.split("&");
+        for (String str : keyValuePairs) {
+            String[] keyValuePair = str.split("=");
+            String key = keyValuePair[0];
+            String value = keyValuePair[1];
+            map.put(key, value);
+        }
+        return map;
     }
-    //---------------------------------------END_OF_PUB-----------------------------------------------//
 
 }
