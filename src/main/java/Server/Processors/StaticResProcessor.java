@@ -6,9 +6,7 @@ import Server.Http.Response;
 
 import java.io.IOException;
 
-public class StaticResProcessor implements Processor{
-
-
+public class StaticResProcessor implements Processor {
     @Override
     public void process(Request req, Response res) {
         String uri = req.getURI();
