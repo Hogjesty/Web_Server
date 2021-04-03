@@ -35,11 +35,7 @@ public class HttpResponse implements Response {
             out.flush();
 
         } catch (FileNotFoundException e) {
-
-            String errorMsg = Constants.HTTP_ERROR_HEADER +
-                    "Content-Length: 23\r\n\r\n" + "<h1>File Not Found</h1>";
-            this.out.write(errorMsg.getBytes(StandardCharsets.UTF_8));
-            this.out.flush();
+            sendError(404, "File Not Found");
 
         } finally {
 
@@ -47,6 +43,27 @@ public class HttpResponse implements Response {
                 fis.close();
             }
 
+        }
+    }
+
+    @Override
+    public void sendHtml(String html) throws IOException {
+        this.out.write(Constants.HTTP_HEADER.getBytes(StandardCharsets.UTF_8));
+        this.out.write(html.getBytes(StandardCharsets.UTF_8));
+        this.out.flush();
+    }
+
+    @Override
+    public void sendError(int code, String msg) {
+        String html = "<h1>" + msg + "<br>Error: " + code + "</h1>";
+        String error = Constants.HTTP_ERROR_HEADER +
+                "Content-Length: " + html.length() + "\r\n\r\n" + html;
+
+        try {
+            this.out.write(error.getBytes(StandardCharsets.UTF_8));
+            this.out.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

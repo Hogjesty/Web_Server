@@ -1,7 +1,7 @@
 package Server.Processors;
 
 import Server.Constants;
-import Server.Server;
+import Server.Servlet.ServletsMap;
 
 public class ProcessorFabric {
 

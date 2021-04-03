@@ -25,10 +25,6 @@ public class Server {
         this.servletsMap = map;
     }
 
-    public ServletsMap getServletsMap() {
-        return servletsMap;
-    }
-
     public void await() throws IOException {
         ServerSocket ss = new ServerSocket(
                 this.port, 1, InetAddress.getByName(Constants.SERVER_NAME)
@@ -54,7 +50,6 @@ public class Server {
 
         System.out.println(req.getAsText());
 
-
         String uri = req.getURI();
         if (uri == null)
             return false;
@@ -62,7 +57,7 @@ public class Server {
         if (uri.equals(Constants.SHUTDOWN_COMMAND))
             return true;
 
-        Processor proc = ProcessorFabric.createProcessor(this, uri);
+        Processor proc = ProcessorFabric.createProcessor(this.servletsMap, uri);
         proc.process(req, res);
 
         return false;

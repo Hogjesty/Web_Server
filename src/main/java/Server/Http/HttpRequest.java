@@ -12,7 +12,7 @@ public class HttpRequest implements Request {
     private final InputStream in;
     private final String req;
     private final String uri;
-    private Map<String, String> params;
+    private final Map<String, String> params;
 
 
     public HttpRequest(InputStream in) throws IOException {
@@ -77,9 +77,11 @@ public class HttpRequest implements Request {
         String[] keyValuePairs = params.split("&");
         for (String str : keyValuePairs) {
             String[] keyValuePair = str.split("=");
-            String key = keyValuePair[0];
-            String value = keyValuePair[1];
-            map.put(key, value);
+            if (keyValuePair.length == 2) {
+                String key = keyValuePair[0];
+                String value = keyValuePair[1];
+                map.put(key, value);
+            }
         }
         return map;
     }
