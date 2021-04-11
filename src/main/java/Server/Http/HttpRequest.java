@@ -1,23 +1,20 @@
 package Server.Http;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
 public class HttpRequest implements Request {
 
-    private final InputStream in;
     private final String req;
     private final String uri;
     private final Map<String, String> params;
 
 
     public HttpRequest(InputStream in) throws IOException {
-        this.in = in;
-        this.req = convertStreamToString();
+        this.req = convertStreamToString(in);
         this.uri = parseURI();
         this.params = addParamsToMap();
     }
@@ -47,21 +44,17 @@ public class HttpRequest implements Request {
         return req.substring(req.indexOf('/'), req.indexOf(" H"));
     }
 
-    private String convertStreamToString() throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(this.in));
+    private String convertStreamToString(InputStream in) throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 
         StringBuilder fullReq = new StringBuilder();
-        String line;
-
-        while (true) {
-            line = reader.readLine();
-            if (line == null || line.isEmpty()) {
-                break;
-            }
-            fullReq.append(line);
-            fullReq.append(System.getProperty("line.separator"));
+        loop(reader, fullReq);
+        if (fullReq.indexOf("POST ") == 0) {
+            // 223322 - content length
+            byte[] bytes = new byte[10];
+            int i = in.read(bytes, 0, 10);
+            fullReq.append(new String(bytes, StandardCharsets.UTF_8));
         }
-
 
         return fullReq.toString();
     }
@@ -86,4 +79,15 @@ public class HttpRequest implements Request {
         return map;
     }
 
+    private void loop (BufferedReader reader, StringBuilder sb) throws IOException {
+        String line;
+        while (true) {
+            line = reader.readLine();
+            if (line == null || line.isEmpty()) {
+                break;
+            }
+            sb.append(line);
+            sb.append(System.getProperty("line.separator"));
+        }
+    }
 }

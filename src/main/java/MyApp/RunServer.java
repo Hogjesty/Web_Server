@@ -19,7 +19,10 @@ public class RunServer {
     private static ServletsMap prepareServletsMap() {
         ServletsMap map = new ServletsMap();
         map.addServlet(NotesServlet.SERVLET_NAME, new NotesServlet());
-
+        //map.addServlet();
+        //map.addServlet();
+        //map.addServlet();
+        //map.addServlet();
         return map;
     }
 }

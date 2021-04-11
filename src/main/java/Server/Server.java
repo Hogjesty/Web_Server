@@ -55,10 +55,13 @@ public class Server {
             return false;
 
         if (uri.equals(Constants.SHUTDOWN_COMMAND))
+            //todo SHUTDOWN command only for admin permission
             return true;
 
         Processor proc = ProcessorFabric.createProcessor(this.servletsMap, uri);
         proc.process(req, res);
+        in.close();
+        out.close();
 
         return false;
     }

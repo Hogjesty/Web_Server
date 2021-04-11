@@ -36,13 +36,13 @@ public class HttpResponse implements Response {
 
         } catch (FileNotFoundException e) {
             sendError(404, "File Not Found");
+            System.err.println(e.getMessage());
 
         } finally {
 
             if (fis != null) {
                 fis.close();
             }
-
         }
     }
 
