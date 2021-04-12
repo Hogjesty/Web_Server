@@ -48,7 +48,7 @@ public class Server {
         Request req = new HttpRequest(in);
         Response res = new HttpResponse(out);
 
-        System.out.println(req.getAsText());
+        System.out.println(req.getAsText().contains("/favicon.ico") ? "GET favicon.ico\r\n" :  req.getAsText());
 
         String uri = req.getURI();
         if (uri == null)

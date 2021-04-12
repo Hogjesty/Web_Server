@@ -41,6 +41,7 @@ public class NotesServlet implements Servlet {
         String html = "<!DOCTYPE html>\n" +
                 "<html lang=\"en\">\n" +
                 "<head>\n" +
+                "    <link rel=\"icon\" href=\"favicon.ico\" type=\"image/x-icon\">" +
                 "    <meta charset=\"utf-8\" />\n" +
                 "    <title>Notes</title>\n" +
                 "    <style>\n" +
@@ -57,6 +58,7 @@ public class NotesServlet implements Servlet {
                 "       autocomplete=\"off\">\n" +
                 "           Text: <input type=\"text\" name=\"note\"><br>" +
                 "           <input type=\"submit\" value=\"add\">" +
+                "           <button type=\"submit\" value=\"add\"> </button>" +
                 "   </form>" +
                 "   <table style=\"width:100%\">" +
                 "       <tr><th>#</th> <th>Text</th></tr>" +
